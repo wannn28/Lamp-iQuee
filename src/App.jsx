@@ -21,8 +21,11 @@ const SPECS = [
 export default function App() {
   const stageRef = useRef(null)
   const explosionRef = useRef(0)
-  const [color, setColor] = useState(FINISHES[0].hex)
+  const [finishIndex, setFinishIndex] = useState(0)
+  const [focus, setFocus] = useState('shade')
   const [kept, setKept] = useState(null)
+  const color = FINISHES[finishIndex].hex
+  const finishName = FINISHES[finishIndex].name
 
   useEffect(() => {
     const stage = stageRef.current
@@ -35,6 +38,8 @@ export default function App() {
       const next = room > 0 ? passed / room : 0
       explosionRef.current = next
       stage.style.setProperty('--explode', next.toFixed(4))
+      const part = next < 0.34 ? 'shade' : next < 0.67 ? 'bulb' : 'base'
+      setFocus((current) => (current === part ? current : part))
     }
 
     onScroll()
@@ -56,58 +61,35 @@ export default function App() {
 
   return (
     <div className="page">
-      <header className="topbar">
-        <a className="mark" href="#top">
-          Fold Lamp
-        </a>
-        <nav>
-          <a href="#specs">Specifications</a>
-          <a href="#materials">Materials</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </header>
-
       <main id="top">
         <section className="stage" ref={stageRef} aria-label="Fold Lamp model">
           <div className="stage-sticky">
             <div className="canvas-wrap">
-              <Lamp explosionRef={explosionRef} color={color} />
+              <Lamp
+                explosionRef={explosionRef}
+                color={color}
+                onCycle={() => setFinishIndex((index) => (index + 1) % FINISHES.length)}
+              />
             </div>
-            <div className="hero-copy">
-              <p className="kicker">Desk lamp</p>
-              <h1>Fold Lamp</h1>
-              <p className="demo-line">A demonstration. The lamp is not for sale.</p>
-              <div className="crossfade">
-                <p className="intro">
-                  A small lamp for a quiet desk. One fold in the arm, a shade you can recolor, and a bulb that shows itself when the parts draw apart.
-                </p>
-                <p className="apart">
-                  Shade, bulb, and base. Scroll back up and they sit together again.
-                </p>
-              </div>
-              <fieldset className="finish">
-                <legend>Shade color</legend>
-                <div className="finish-row">
-                  {FINISHES.map((finish) => (
-                    <button
-                      key={finish.id}
-                      type="button"
-                      aria-pressed={color === finish.hex}
-                      onClick={() => setColor(finish.hex)}
-                    >
-                      <span className="dot" style={{ background: finish.hex }} />
-                      {finish.name}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-              <p className="hint">Drag the lamp to turn it. Scroll to separate the parts.</p>
-              <div className="meter" aria-hidden="true">
-                <span>Together</span>
-                <i />
-                <span>Apart</span>
-              </div>
-            </div>
+            <p className="corner">
+              <strong>Fold Lamp</strong>
+              <span>Pull the cord. The shade changes color.</span>
+            </p>
+            <aside className="part-notes">
+              <p className={focus === 'shade' ? 'part-note shade is-on' : 'part-note shade'}>
+                <strong>Shade</strong>
+                Pressed cotton paper. The cord changes this color.
+              </p>
+              <p className={focus === 'bulb' ? 'part-note bulb is-on' : 'part-note bulb'}>
+                <strong>Bulb</strong>
+                Frosted glass over a warm 2700 K LED.
+              </p>
+              <p className={focus === 'base' ? 'part-note base is-on' : 'part-note base'}>
+                <strong>Base</strong>
+                Spun brass with a weighted foot.
+              </p>
+            </aside>
+            <p className="live-color">{finishName}</p>
           </div>
         </section>
 
@@ -136,7 +118,7 @@ export default function App() {
             <div className="material">
               <h3>Shade</h3>
               <p>
-                Pressed cotton paper, dyed through in linen, clay, moss, or ink, with a pale cloth lining. The color control on this page only changes the model.
+                Pressed cotton paper, dyed through in linen, clay, moss, or ink, with a pale cloth lining. Pulling the cord on this page only changes the model.
               </p>
             </div>
             <div className="material">

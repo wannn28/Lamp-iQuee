@@ -78,13 +78,29 @@ function Parts({ explosionRef, color, controlsRef, onCycle }) {
   const bulb = useRef(null)
   const base = useRef(null)
   const cord = useRef(null)
+  const bead = useRef(null)
   const amount = useRef(0)
   const rig = useRef(null)
   const stretch = useRef(0)
   const shown = useRef(0)
   const { gl } = useThree()
 
-  const rest = 0.22
+  const cordCurve = useMemo(() => {
+    return new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0.016, -0.035, 0.012),
+      new THREE.Vector3(0.038, -0.13, 0.02),
+      new THREE.Vector3(0.01, -0.25, 0.006),
+    ])
+  }, [])
+  const cordHit = useMemo(() => {
+    return new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0.016, -0.035, 0.012),
+      new THREE.Vector3(0.038, -0.13, 0.02),
+      new THREE.Vector3(0.01, -0.25, 0.006),
+    ])
+  }, [])
 
   useFrame((_, delta) => {
     const target = explosionRef.current || 0
@@ -98,7 +114,7 @@ function Parts({ explosionRef, color, controlsRef, onCycle }) {
     if (cord.current) {
       const scale = 1 + shown.current
       cord.current.scale.y = scale
-      cord.current.position.y = -(rest * scale) / 2
+      if (bead.current) bead.current.scale.y = 1 / scale
     }
   })
 
@@ -130,30 +146,33 @@ function Parts({ explosionRef, color, controlsRef, onCycle }) {
     <group ref={rig}>
       <group ref={shade}>
         <mesh name="shade" geometry={shadeGeo} material={shadeMat} />
-        <group position={[0.15, 0.42, 0.178]}>
-          <mesh
-            ref={cord}
-            name="cord"
-            position={[0, -rest / 2, 0]}
-            material={cordMat}
-            onPointerDown={beginPull}
-            onPointerOver={() => {
-              gl.domElement.style.cursor = 'grab'
-            }}
-            onPointerOut={() => {
-              if (stretch.current === 0) gl.domElement.style.cursor = ''
-            }}
-          >
-            <cylinderGeometry args={[0.005, 0.005, rest, 10]} />
-            <mesh position={[0, -rest / 2, 0]}>
-              <sphereGeometry args={[0.011, 12, 12]} />
-              <meshStandardMaterial color="#8d7356" roughness={0.55} metalness={0.05} />
+        <group position={[0.155, 0.426, 0.177]}>
+          <mesh position={[0.004, 0.012, 0.003]} rotation={[0.35, 0.2, -0.45]} material={baseMat}>
+            <cylinderGeometry args={[0.012, 0.015, 0.028, 14]} />
+          </mesh>
+          <group ref={cord}>
+            <mesh
+              name="cord"
+              material={cordMat}
+              onPointerDown={beginPull}
+              onPointerOver={() => {
+                gl.domElement.style.cursor = 'grab'
+              }}
+              onPointerOut={() => {
+                if (stretch.current === 0) gl.domElement.style.cursor = ''
+              }}
+            >
+              <tubeGeometry args={[cordCurve, 40, 0.0055, 8, false]} />
             </mesh>
-          </mesh>
-          <mesh position={[0, -rest / 2, 0]} onPointerDown={beginPull}>
-            <cylinderGeometry args={[0.028, 0.028, rest, 8]} />
-            <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-          </mesh>
+            <mesh ref={bead} position={[0.01, -0.25, 0.006]}>
+              <sphereGeometry args={[0.013, 16, 16]} />
+              <meshStandardMaterial color="#8d7356" roughness={0.5} metalness={0.08} />
+            </mesh>
+            <mesh onPointerDown={beginPull}>
+              <tubeGeometry args={[cordHit, 16, 0.02, 6, false]} />
+              <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+            </mesh>
+          </group>
         </group>
       </group>
       <group ref={bulb}>

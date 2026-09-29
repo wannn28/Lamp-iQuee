@@ -54,7 +54,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .canvas-wrap {
   position: absolute;
   z-index: 1;
-  inset: 0;
+  inset: 0 34vw 0 0;
 }
 
 .lamp-canvas { width: 100%; height: 100%; display: block; touch-action: none; }
@@ -84,18 +84,32 @@ button, input, textarea { font: inherit; color: inherit; }
   color: var(--ink-soft);
 }
 
-.part-notes { pointer-events: none; }
-
-.part-note {
+.part-notes {
   position: absolute;
   z-index: 2;
-  right: 1.5rem;
-  width: 11rem;
+  top: 0;
+  right: 0;
+  width: 34vw;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.part-stack {
+  display: grid;
+  gap: 1.7rem;
+  padding: 22vh 1.6rem 0 1.4rem;
+  transform: translateY(calc(var(--explode) * -46vh));
+}
+
+.part-note {
+  position: static;
+  width: auto;
   margin: 0;
-  font-size: 0.86rem;
+  font-size: 0.95rem;
   line-height: 1.4;
   color: var(--ink-soft);
-  opacity: 0.28;
+  opacity: 0.38;
 }
 
 .part-note strong {
@@ -109,9 +123,6 @@ button, input, textarea { font: inherit; color: inherit; }
 }
 
 .part-note.is-on { opacity: 1; }
-.part-note.shade { top: calc(24% - var(--explode) * 8%); }
-.part-note.bulb { top: 46%; }
-.part-note.base { top: calc(66% + var(--explode) * 8%); }
 
 .live-color {
   position: absolute;
@@ -263,7 +274,9 @@ button, input, textarea { font: inherit; color: inherit; }
 
 @media (max-width: 860px) {
   .corner, .live-color { left: 1rem; }
-  .part-note { right: 1rem; width: 8.5rem; }
+  .canvas-wrap { inset: 0 42vw 0 0; }
+  .part-notes { width: 42vw; }
+  .part-stack { padding-right: 1rem; padding-left: 0.8rem; }
   .spec-list div,
   .material { grid-template-columns: 1fr; gap: 0.25rem; }
   .sheet, .contact-band { padding-left: 1.25rem; padding-right: 1.25rem; }

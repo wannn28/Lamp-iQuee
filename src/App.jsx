@@ -76,18 +76,24 @@ export default function App() {
               <span>Pull the cord. The shade changes color.</span>
             </p>
             <aside className="part-notes">
-              <p className={focus === 'shade' ? 'part-note shade is-on' : 'part-note shade'}>
-                <strong>Shade</strong>
-                Pressed cotton paper. The cord changes this color.
-              </p>
-              <p className={focus === 'bulb' ? 'part-note bulb is-on' : 'part-note bulb'}>
-                <strong>Bulb</strong>
-                Frosted glass over a warm 2700 K LED.
-              </p>
-              <p className={focus === 'base' ? 'part-note base is-on' : 'part-note base'}>
-                <strong>Base</strong>
-                Spun brass with a weighted foot.
-              </p>
+              <div className="part-stack">
+                <p className={focus === 'shade' ? 'part-note is-on' : 'part-note'}>
+                  <strong>Shade</strong>
+                  Pressed cotton paper. The cord changes this color.
+                </p>
+                <p className={focus === 'bulb' ? 'part-note is-on' : 'part-note'}>
+                  <strong>Bulb</strong>
+                  Frosted glass over a warm 2700 K LED.
+                </p>
+                <p className={focus === 'base' ? 'part-note is-on' : 'part-note'}>
+                  <strong>Base</strong>
+                  Spun brass with a weighted foot.
+                </p>
+                <p className="part-note is-on">
+                  <strong>Demo</strong>
+                  This page is a demonstration. The lamp is fictional, and nothing here is for sale.
+                </p>
+              </div>
             </aside>
             <p className="live-color">{finishName}</p>
           </div>
